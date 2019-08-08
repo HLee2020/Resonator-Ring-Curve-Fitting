@@ -69,13 +69,6 @@ for i in wavelength:
     if i >= a and i <= b:
         wavelength_range.append(i)
         loss_range.append(float(loss[np.where(wavelength==i)]))
-#
-# plt.figure(figsize=(12,8))
-# plt.errorbar(wavelength_range, loss_range, yerr=dloss, marker=".")
-# plt.title('3E W8 Through')
-# plt.xlabel('Wavelength (nm)')
-# plt.ylabel('Insertion Loss')
-# plt.show()
 
 def through_background (p, x):
     '''lamb taken to be a list of wavelengths for the sweep region'''
@@ -146,20 +139,6 @@ def sinusoidal(p, x):
 thru = through(p0, wavelength)
 total = through_background(p0, wavelength)
 background = sinusoidal(p0, wavelength)
-# background_1 = sinusoidal(p1, wavelength)
-
-loss_cleaned = [i-j for i,j in zip(loss, background)]
-
-# plt.figure(figsize=(12,8))
-# plt.errorbar(wavelength_range, loss_range, yerr=dloss, marker=".", label="data")
-# plt.plot(wavelength_range, thru, label="through plot")
-# plt.plot(wavelength_range, back, label="background plot")
-# plt.plot(wavelength_range, total, label="total plot")
-# plt.title('3E W8 Through')
-# plt.xlabel('Wavelength (nm)')
-# plt.ylabel('Insertion Loss')
-# plt.legend()
-# plt.show()
 
 plt.figure(figsize=(12,8))
 plt.plot(wavelength, total)
@@ -167,13 +146,3 @@ plt.plot(wavelength, background, alpha=0.5)
 plt.plot(wavelength, loss)
 plt.plot(wavelength, thru, alpha=0.5)
 plt.show()
-
-# background_shifted = [i+background_shift for i in background]
-# plt.figure(figsize=(12,8))
-# plt.plot(wavelength, background_shifted)
-# plt.plot(wavelength, loss)
-# plt.show()
-
-# plt.figure(figsize=(12,8))
-# plt.plot(wavelength, loss_cleaned)
-# plt.show()
