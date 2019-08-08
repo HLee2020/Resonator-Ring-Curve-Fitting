@@ -8,6 +8,6 @@ General fitting process flow:
 Two versions of fitting scripts, with and without background (background approximated as a sinusoidal).
 
 Model based off paper: 
-    Laser Photonics Rev. 6, No.1, 47–73 (2012)/DOI 10.1002/lpor.201100017
+    Laser Photonics Rev. 6, No.1, 47–73 (2012)/DOI 10.1002/lpor.201100017 (https://doi.org/10.1002/lpor.201100017)
 
 
