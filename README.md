@@ -5,7 +5,7 @@ General fitting process flow:
   First a general "fit by eye" using plotting scripts in order to determine a set of initial parameter values.
   Then, feed initial values into full model fitting script in order to run fitting algorithm.
 
-Two versions of fitting scripts, with and without background.
+Two versions of fitting scripts, with and without background (background approximated as a sinusoidal).
 
 Model based off paper: 
     Silicon microring resonators
