@@ -88,15 +88,6 @@ def plotting_drop(p, lamb):
 
     lamb = [i*10**-9 for i in lamb]
 
-    # given arameters
-    # ng = 3.5
-    # neff = 3.65
-    # c = 299792458
-    # vg = c/ng
-    #
-    # r = 2.4e-3 # radius
-    # L_rt = 2*pi*r
-
     alpha_wg = -log(10**(-p[0]/10))
     a = sqrt(math.exp(-alpha_wg*L_rt))
     A = exp(-alpha_wg*100*L_rt)
@@ -127,8 +118,6 @@ if test == 1:
     plt.ylabel('Insertion Loss')
     plt.axvspan(wavelength_range[range_min], wavelength_range[range_max], alpha=0.5, color='grey')
     plt.legend(loc="lower right", borderaxespad=0)
-
-    # plt.savefig("4C_W9_drop_max_model_1.svg")
     plt.show()
 
 plt.plot(wavelength, loss)
