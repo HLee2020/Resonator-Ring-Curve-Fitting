@@ -16,10 +16,10 @@ rcParams['font.serif'] = ["Garamond"]
 rcParams['font.size'] = '20'
 
 # Loading proper files
-wavelength_through, loss_through = np.loadtxt("C:\\Users\\HopeLee\\Documents\\Data\\Ring Resonators\\LSRL THERM2 W3\\Top_Right\\3E bottom\\Fine Scans\\3E_fine_1553_0_max_through.csv", delimiter=",", unpack=True, skiprows=19)
-wavelength_drop, loss_drop = np.loadtxt("C:\\Users\\HopeLee\\Documents\\Data\\Ring Resonators\\LSRL THERM2 W3\\Top_Right\\3E bottom\\Fine Scans\\3E_fine_1553_0_max_drop.csv", delimiter=",", unpack=True, skiprows=19)
+wavelength_through, loss_through = np.loadtxt("C:\\Users\\HopeLee\\Documents\\Data\\Conner's Wafer\\Bottom Left\\big_3D_top\\Fine Scans\\3D_L_1553_6_through_max.csv", delimiter=",", unpack=True, skiprows=19)
+wavelength_drop, loss_drop = np.loadtxt("C:\\Users\\HopeLee\\Documents\\Data\\Conner's Wafer\\Bottom Left\\big_3D_top\\Fine Scans\\3D_L_1553_6_drop_max.csv", delimiter=",", unpack=True, skiprows=19)
 
-title = "3E Max Top Right"
+title = "Bottom Left 3D Large"
 f= open(title+'.txt',"w+")
 
 dloss_through = 10**(-4)
@@ -27,35 +27,37 @@ dloss_drop = 10**(-4)
 f.write("dloss through: "+str(dloss_through)+"\n")
 f.write("dloss drop: "+str(dloss_drop)+"\n")
 
-R = 2.4*10**-3
+R = 4.8*10**-3
 L_rt = 2*pi*R #round trip lengths
 
 # Toggles (1=yes, 0=no)
-test = 1
+test = 0
 Q_all = 1
 save = 1
 full_only = 0
 manual_through_toggle = 0
 manual_drop_toggle = 0
+final_only = 1
 
 drop_manual = [[1547.81, 1547.825], [1547.985, 1547.995]]
-
 through_manual = [[1547.81, 1547.816], [1547.984, 1547.99]]
 
 # Parameters for through peak finding
-prominence_through = 0.00001 # filter to select correct peaks
+prominence_through = 0.0005 # filter to select correct peaks
 scale_through = 1.0 # scaling for width of wavelength ranges
 shift_through = 0.1 # vertical shift to change dips to peaks to use function
 
-prominence_drop = 0.0002
-scale_drop = 1.0
+prominence_drop = 0.00055
+scale_drop = 1.2
 
 shift_constant = 0
 fitting_shift = round((wavelength_through[2]-wavelength_through[1])*10**9*shift_constant, 4)
 
+final_shift = 0.0035
+
 # Fitting parameters:
-p0_t = [0.4, 0.45, -1.8, 0.00025, 0.00015, 3.6500, 0.000033, 110e9, -0.12, 0]
-p0_d = [0.4, 0.45, 3.2, 0.0006, 0.00005, 3.6500]
+p0_t = [0.4, 0.46, 0.95, 0.0052, 0.0012, 3.6500, 0.00044, 207e9, 3.2, -0.001]
+p0_d = [0.43, 0.43, -0.15, 0.027, 0.00, 3.6500]
 
 f.write("Through peak finding: \n")
 f.write("   Prominence through: "+str(prominence_through)+"\n")
@@ -387,7 +389,7 @@ def transmission_fitting(type, radius, x_list, ranges, y_list, y_err, p_0, title
 
     r = radius
     if test == 1:
-        if full_only != 1:
+        if full_only != 1 and final_only != 1:
             plt.figure(figsize=(15,10))
             plt.plot(x_list, y_list, marker=".")
             plt.plot(ranges[0], ranges[1])
@@ -484,7 +486,7 @@ def transmission_fitting(type, radius, x_list, ranges, y_list, y_err, p_0, title
     else:
         return ("Enter for type either 'through' or 'drop'")
 
-    if full_only != 1:
+    if full_only != 1 and final_only != 1:
         fig = plt.figure(figsize=(15,10))
         ax = fig.add_subplot(111)
         ax.plot(x_list, y_list, marker=".", label="Data", Zorder=1, alpha=0.25)
@@ -572,7 +574,7 @@ def both_fit(radius, x_list, range_t, range_d, y_list_t, y_list_t_full, y_list_d
     ranges_t = fitting_ranges(range_t, ran[0], ran[2])
     ranges_d = fitting_ranges(range_d, ran[1], ran[3])
 
-    if test == 1:
+    if test == 1 and final_only != 1:
         plt.figure(figsize=(15,10))
         plt.plot(x_list, y_list_t, marker=".")
         plt.plot(x_list, y_list_d, marker=".")
@@ -587,7 +589,7 @@ def both_fit(radius, x_list, range_t, range_d, y_list_t, y_list_t_full, y_list_d
     y_ranges_t = [ran[2][i] for i in indices]
     y_ranges_d = [ran[3][i] for i in indices]
 
-    if test == 1:
+    if test == 1 and final_only != 1:
         plt.figure(figsize=(15,10))
         plt.plot(x_list, y_list_t, marker=".")
         plt.plot(x_list, y_list_d, marker=".")
@@ -646,7 +648,7 @@ def both_fit(radius, x_list, range_t, range_d, y_list_t, y_list_t_full, y_list_d
     y_t = through(p_t, ran[0])
     y_d = drop(p_d, ran[1])
 
-    if test == 1:
+    if test == 1 and final_only != 1:
         plt.figure(figsize=(15,10))
         plt.plot(ran[0], ran[2], marker=".")
         plt.plot(ran[1], ran[3], marker=".")
@@ -709,13 +711,36 @@ def both_fit(radius, x_list, range_t, range_d, y_list_t, y_list_t_full, y_list_d
     Q_c = "Coupling: " + '%.3E' % Decimal(Qc)
     Q_t = "Total: " + '%.3E' % Decimal(Q_total)
 
+    if final_only != 1:
+        fig = plt.figure(figsize=(15,10))
+        ax = fig.add_subplot(111)
+        ax.plot(x_list, y_list_t_full, marker=".", color="C0", label="Raw Through Data", alpha=0.75, Zorder=1)
+        ax.plot(x_list, y_list_t, marker=".", color="C1", label="Cleaned Through Data", alpha=0.75, Zorder=1)
+        ax.plot(x_list, y_list_d, marker=".", color="C2", label="Drop Data", alpha=0.75, Zorder=1)
+        ax.plot(x_t_shift, y_t, color="C3", label="Through Fit", Zorder=2)
+        ax.plot(ran[1], y_d, color="C3", label="Drop Fit", Zorder=2)
+        ax.set_xlabel("Wavelength (nm)")
+        ax.set_ylabel("Insertion Loss")
+        ax.legend(loc="lower right")
+        ax.set_title(title)
+        props = dict(facecolor='white', alpha=0.9)
+        if Q_all == 1:
+            text = "{}\n{}\n{}".format(Q_i, Q_c, Q_t)
+            plt.text(0.02, 0.15, text, transform=ax.transAxes, fontsize=20, verticalalignment='top', bbox=props)
+        else:
+            plt.text(0.02, 0.15, Q_i, transform=ax.transAxes, fontsize=20, verticalalignment='top', bbox=props)
+        if save == 1:
+            plt.savefig(title + "_full_model.svg")
+        plt.show()
+
+    x_list_shift = [i+final_shift for i in x_list]
+    x_list_shift_2 =[i+final_shift for i in ran[1]]
     fig = plt.figure(figsize=(15,10))
     ax = fig.add_subplot(111)
-    ax.plot(x_list, y_list_t_full, marker=".", color="C0", label="Raw Through Data", alpha=0.75, Zorder=1)
-    ax.plot(x_list, y_list_t, marker=".", color="C1", label="Cleaned Through Data", alpha=0.75, Zorder=1)
-    ax.plot(x_list, y_list_d, marker=".", color="C2", label="Drop Data", alpha=0.75, Zorder=1)
-    ax.plot(x_t_shift, y_t, color="C3", label="Through Fit", Zorder=2)
-    ax.plot(ran[1], y_d, color="C3", label="Drop Fit", Zorder=2)
+    ax.plot(x_list, y_list_t, marker=".", color="C0", label="Cleaned Through Data", alpha=0.75, Zorder=1)
+    ax.plot(x_list_shift, y_list_d, marker=".", color="C1", label="Drop Data", alpha=0.75, Zorder=1)
+    ax.plot(x_t_shift, y_t, color="C2", label="Through Fit", Zorder=2)
+    ax.plot(x_list_shift_2, y_d, color="C3", label="Drop Fit", Zorder=2)
     ax.set_xlabel("Wavelength (nm)")
     ax.set_ylabel("Insertion Loss")
     ax.legend(loc="lower right")
@@ -727,7 +752,7 @@ def both_fit(radius, x_list, range_t, range_d, y_list_t, y_list_t_full, y_list_d
     else:
         plt.text(0.02, 0.15, Q_i, transform=ax.transAxes, fontsize=20, verticalalignment='top', bbox=props)
     if save == 1:
-        plt.savefig(title + "_full_model.svg")
+        plt.savefig(title + "_full_model_final.svg")
     plt.show()
 
 # Determing the wavelength ranges of interest for transmission_fitting
@@ -750,7 +775,7 @@ if manual_through_toggle == 1:
     through_range = through_manual
 ranges_t = fitting_ranges(through_range, wavelength_through, y_cleaned)
 
-if test == 1:
+if test == 1 and final_only != 1 and full_only != 1:
     plt.figure(figsize = (15,8))
     plt.plot(wavelength_through, loss_through)
     plt.plot(wavelength_through, through(through_background_fit, wavelength_through))
